@@ -1,0 +1,27 @@
+{
+  "name": "smart-canteen-management-system",
+  "version": "1.0.0",
+  "description": "Smart Canteen Management System for a college campus - students order online, staff manage orders, menu, inventory and sales.",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "db:init": "node database/init.js",
+    "test": "node e2e.test.js"
+  },
+  "keywords": [
+    "canteen",
+    "express",
+    "sqlite",
+    "bootstrap",
+    "nodejs"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  }
+}

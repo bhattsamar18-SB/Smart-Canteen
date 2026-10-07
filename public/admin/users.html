@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Management — Smart Canteen Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/admin.css" rel="stylesheet">
+</head>
+<body data-layout="admin" data-page="users">
+  <div id="adminSidebarMount"></div>
+
+  <div class="admin-main">
+    <div id="adminTopbarMount"></div>
+
+    <main class="admin-content">
+      <!-- KPI cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+          <div class="stat-card"><div class="ico i-blue"><i class="bi bi-people"></i></div>
+            <div><div class="label">Total Users</div><div class="value" id="kpiTotal">—</div></div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="stat-card"><div class="ico i-teal"><i class="bi bi-mortarboard"></i></div>
+            <div><div class="label">Students</div><div class="value" id="kpiStudents">—</div></div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="stat-card"><div class="ico i-amber"><i class="bi bi-shop"></i></div>
+            <div><div class="label">Vendors</div><div class="value" id="kpiVendors">—</div></div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="stat-card"><div class="ico i-red"><i class="bi bi-shield-lock"></i></div>
+            <div><div class="label">Restricted</div><div class="value" id="kpiRestricted">—</div></div></div>
+        </div>
+      </div>
+
+      <!-- Users table -->
+      <div class="table-card">
+        <div class="d-flex flex-wrap gap-3 align-items-center p-3 border-bottom">
+          <h6 class="m-0 flex-grow-1">All Accounts</h6>
+          <input type="search" id="userSearch" class="form-control form-control-sm" style="max-width:220px"
+                 placeholder="Search name / email / ID">
+          <select id="roleFilter" class="form-select form-select-sm" style="max-width:140px">
+            <option value="">All roles</option>
+            <option value="student">Students</option>
+            <option value="vendor">Vendors</option>
+            <option value="admin">Admins</option>
+          </select>
+          <select id="statusFilter" class="form-select form-select-sm" style="max-width:150px">
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="restricted">Restricted</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="addUserBtn"><i class="bi bi-person-plus me-1"></i>Add User</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table admin-table">
+            <thead>
+              <tr>
+                <th>User</th><th>Role</th><th>ID / Shop</th><th>Status</th>
+                <th class="text-end">Orders</th><th>Joined</th><th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody">
+              <tr><td colspan="7" class="empty-mini">Loading accounts…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="text-secondary small mt-2" id="usersMeta"></div>
+    </main>
+  </div>
+
+  <!-- Add / Edit user modal -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" id="userForm" novalidate style="border-radius:18px">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title" id="userModalTitle">Add User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="userId">
+          <div class="mb-3">
+            <label class="form-label" for="uName">Full name</label>
+            <input type="text" class="form-control" id="uName" required placeholder="e.g. Rahul Sharma">
+            <div class="invalid-feedback">Please enter a name.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="uEmail">Email</label>
+            <input type="email" class="form-control" id="uEmail" required placeholder="user@example.com">
+            <div class="invalid-feedback">Enter a valid email.</div>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label" for="uRole">Role</label>
+              <select class="form-select" id="uRole">
+                <option value="student">Student</option>
+                <option value="vendor">Vendor</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label" for="uStatus">Status</label>
+              <select class="form-select" id="uStatus">
+                <option value="active">Active</option>
+                <option value="restricted">Restricted</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3" id="sidWrap">
+            <label class="form-label" for="uSid">Student ID <span class="text-secondary">(optional)</span></label>
+            <input type="text" class="form-control" id="uSid" placeholder="STU-2024-001">
+          </div>
+          <div class="mb-3" id="shopWrap" hidden>
+            <label class="form-label" for="uShop">Shop / canteen name</label>
+            <input type="text" class="form-control" id="uShop" placeholder="e.g. Campus Food Court">
+            <div class="invalid-feedback">Shop name is required for a vendor.</div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label" for="uPassword" id="pwLabel">Password</label>
+            <input type="password" class="form-control" id="uPassword" minlength="6" placeholder="Min 6 characters" autocomplete="new-password">
+            <div class="invalid-feedback">Password must be at least 6 characters.</div>
+            <div class="form-text" id="pwHelp">Min 6 characters.</div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="userSave">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/admin/users.js"></script>
+</body>
+</html>

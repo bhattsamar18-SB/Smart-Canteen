@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menu Management — Smart Canteen Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/admin.css" rel="stylesheet">
+</head>
+<body data-layout="admin" data-page="menu">
+  <div id="adminSidebarMount"></div>
+
+  <div class="admin-main">
+    <div id="adminTopbarMount"></div>
+
+    <main class="admin-content">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+          <h6 class="mb-1">Food items</h6>
+          <div class="text-secondary" style="font-size:.85rem" id="itemMeta">Loading…</div>
+        </div>
+        <button class="btn btn-primary" id="addBtn"><i class="bi bi-plus-lg me-1"></i>Add Food Item</button>
+      </div>
+
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="table admin-table">
+            <thead>
+              <tr>
+                <th>Image</th><th>Item</th><th>Category</th><th>Price</th>
+                <th>Stock</th><th>Availability</th><th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="menuBody">
+              <tr><td colspan="7" class="empty-mini">Loading menu…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit modal -->
+  <div class="modal fade" id="itemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <form class="modal-content" id="itemForm" novalidate style="border-radius:18px">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title" id="itemModalTitle">Add Food Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="itemId">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="itemName">Food name *</label>
+              <input type="text" class="form-control" id="itemName" required placeholder="e.g. Masala Dosa">
+              <div class="invalid-feedback">Name is required.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="itemDesc">Description</label>
+              <textarea class="form-control" id="itemDesc" rows="2" placeholder="Short appetising description"></textarea>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <label class="form-label" for="itemPrice">Price ₹ *</label>
+              <input type="number" class="form-control" id="itemPrice" min="0" step="1" required>
+              <div class="invalid-feedback">Valid price required.</div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <label class="form-label" for="itemCategory">Category *</label>
+              <select class="form-select" id="itemCategory" required>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Snacks" selected>Snacks</option>
+                <option value="Meals">Meals</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Desserts">Desserts</option>
+              </select>
+            </div>
+            <div class="col-sm-6 col-md-2">
+              <label class="form-label" for="itemStock">Stock *</label>
+              <input type="number" class="form-control" id="itemStock" min="0" step="1" required>
+            </div>
+            <div class="col-sm-6 col-md-3">
+              <label class="form-label" for="itemMin">Min stock</label>
+              <input type="number" class="form-control" id="itemMin" min="0" step="1" value="5">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="itemImage">Image path or URL</label>
+              <input type="text" class="form-control" id="itemImage" list="imagePresets" placeholder="/assets/food/dosa.svg">
+              <datalist id="imagePresets">
+                <option value="/assets/food/dosa.svg"><option value="/assets/food/idli.svg">
+                <option value="/assets/food/paratha.svg"><option value="/assets/food/omelette.svg">
+                <option value="/assets/food/samosa.svg"><option value="/assets/food/sandwich.svg">
+                <option value="/assets/food/pavbhaji.svg"><option value="/assets/food/burger.svg">
+                <option value="/assets/food/fries.svg"><option value="/assets/food/pizza.svg">
+                <option value="/assets/food/thali.svg"><option value="/assets/food/friedrice.svg">
+                <option value="/assets/food/paneerroll.svg"><option value="/assets/food/tea.svg">
+                <option value="/assets/food/coldcoffee.svg"><option value="/assets/food/juice.svg">
+                <option value="/assets/food/lassi.svg"><option value="/assets/food/cake.svg">
+                <option value="/assets/food/icecream.svg">
+              </datalist>
+              <input type="file" class="form-control mt-2" id="itemFile" accept="image/*">
+              <div class="form-text">Pick a file to use a custom image (stored with the item), or keep a path above.</div>
+            </div>
+            <div class="col-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="itemAvailable" checked>
+                <label class="form-check-label" for="itemAvailable">Available for ordering</label>
+              </div>
+            </div>
+            <div class="col-12 d-flex align-items-center gap-3" id="itemPreviewWrap" hidden>
+              <img id="itemPreview" src="" alt="" style="width:90px;height:70px;object-fit:cover;border-radius:10px;background:#f1f5f9">
+              <span class="text-secondary" style="font-size:.85rem">Preview</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/admin/menu.js"></script>
+</body>
+</html>
