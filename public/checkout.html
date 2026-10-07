@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout — Smart Canteen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top border-bottom py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <span class="brand-mark">🍽️</span>
+        <span class="brand-text fw-bold fs-5 text-dark">Smart Canteen</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/menu">Menu</a></li>
+          <li class="nav-item"><a class="nav-link" href="/orders">My Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          <span data-auth-link="name" class="fw-semibold text-primary" hidden></span>
+          <a href="/admin" class="btn btn-sm btn-outline-secondary" data-auth-link="admin" hidden><i class="bi bi-speedometer2 me-1"></i>Admin</a>
+          <a href="/login" class="btn btn-outline-primary" data-auth-link="login">Sign In</a>
+          <button class="btn btn-outline-secondary btn-sm" data-auth-link="logout" hidden data-logout-btn>Logout</button>
+          <button class="cart-btn desktop-cart" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-label="Open cart">
+            <i class="bi bi-bag"></i><span class="cart-count" hidden>0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+
+    <!-- Not logged in -->
+    <div id="loginPrompt" class="empty-state" hidden>
+      <div class="big">🔐</div>
+      <h5>Please log in to checkout</h5>
+      <p>You need an account so we can track your order and token.</p>
+      <a href="/login?next=%2Fcheckout" class="btn btn-primary">Login / Register</a>
+    </div>
+
+    <!-- Empty cart -->
+    <div id="emptyCart" class="empty-state" hidden>
+      <div class="big">🛒</div>
+      <h5>Your cart is empty</h5>
+      <p>Add something delicious before checking out.</p>
+      <a href="/menu" class="btn btn-primary">Browse Menu</a>
+    </div>
+
+    <div id="checkoutView" hidden>
+      <div class="mb-4">
+        <div class="eyebrow">Checkout</div>
+        <h2 class="mb-1">Almost there 🎯</h2>
+        <p class="text-secondary mb-0">Confirm your details, pick a slot and pay — your token is generated instantly.</p>
+      </div>
+
+      <form id="checkoutForm" novalidate>
+        <div class="row g-4">
+          <!-- Left column -->
+          <div class="col-lg-7 d-flex flex-column gap-4">
+            <div class="panel">
+              <h5><i class="bi bi-person-circle text-primary me-2"></i>Customer information</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="custName">Full name</label>
+                  <input type="text" class="form-control" id="custName" required placeholder="e.g. Rahul Sharma">
+                  <div class="invalid-feedback">Please enter your name.</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="custSid">Student ID</label>
+                  <input type="text" class="form-control" id="custSid" placeholder="e.g. STU-2021-001">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="custMobile">Mobile number</label>
+                  <input type="tel" class="form-control" id="custMobile" required maxlength="10" pattern="\d{10}" placeholder="10-digit mobile number">
+                  <div class="invalid-feedback">Enter a valid 10-digit mobile number.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h5><i class="bi bi-clock text-primary me-2"></i>Pickup time slot</h5>
+              <div class="d-flex flex-wrap gap-2" id="slotWrap">
+                <!-- filled by checkout.js -->
+              </div>
+            </div>
+
+            <div class="panel">
+              <h5><i class="bi bi-wallet2 text-primary me-2"></i>Payment method</h5>
+              <div class="d-grid gap-2">
+                <label class="pay-option">
+                  <input type="radio" name="payment" value="upi" checked class="d-none">
+                  <span class="pay-ico">📲</span>
+                  <span class="pay-body"><b>UPI</b><span>Pay by any UPI app (simulated)</span></span>
+                </label>
+                <label class="pay-option">
+                  <input type="radio" name="payment" value="wallet" class="d-none">
+                  <span class="pay-ico">👛</span>
+                  <span class="pay-body"><b>Digital Wallet</b><span>Canteen wallet balance (simulated)</span></span>
+                </label>
+                <label class="pay-option">
+                  <input type="radio" name="payment" value="cod" class="d-none">
+                  <span class="pay-ico">💵</span>
+                  <span class="pay-body"><b>Cash on Delivery</b><span>Pay at the pickup counter when you collect</span></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column: summary -->
+          <div class="col-lg-5">
+            <div class="panel position-sticky" style="top:90px">
+              <h5>Order summary</h5>
+              <div id="summaryLines"></div>
+              <div class="bill-row mt-2"><span>Subtotal</span><span id="sumSub">₹0</span></div>
+              <div class="bill-row"><span>GST (5%)</span><span id="sumTax">₹0</span></div>
+              <div class="bill-row total"><span>Total</span><span id="sumTotal">₹0</span></div>
+              <button type="submit" class="btn btn-accent w-100 mt-4 btn-lg" id="payBtn">
+                <i class="bi bi-shield-lock me-2"></i><span id="payBtnText">Pay &amp; Place Order</span>
+              </button>
+              <p class="form-text text-center mt-2 mb-0">UPI and wallet payments are simulated. Cash on Delivery is settled at the counter.</p>
+              <a href="/menu" class="btn btn-link mt-2 w-100">← Continue shopping</a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Confirmation -->
+    <div id="confirmView" hidden>
+      <div class="confirm-hero">
+        <div class="check"><i class="bi bi-check-lg"></i></div>
+        <h2>Order Placed Successfully! 🎉</h2>
+        <p class="text-secondary">Your order is confirmed and the canteen has been notified.</p>
+
+        <div class="token-box">
+          <small>Token Number</small>
+          <b id="confToken">A-000</b>
+        </div>
+
+        <div class="row g-3 justify-content-center mt-1">
+          <div class="col-sm-4 col-8">
+            <div class="panel text-center h-100">
+              <div class="text-secondary" style="font-size:.8rem">ESTIMATED PICKUP</div>
+              <b class="fs-5" id="confPickup">—</b>
+            </div>
+          </div>
+          <div class="col-sm-4 col-8">
+            <div class="panel text-center h-100">
+              <div class="text-secondary" style="font-size:.8rem">STATUS</div>
+              <b class="fs-5"><span class="badge-status st-pending" id="confStatus">Order Received</span></b>
+            </div>
+          </div>
+          <div class="col-sm-4 col-8">
+            <div class="panel text-center h-100">
+              <div class="text-secondary" style="font-size:.8rem">AMOUNT PAID</div>
+              <b class="fs-5" id="confTotal">—</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center mt-4 flex-wrap">
+          <a class="btn btn-primary btn-lg px-4" id="trackBtn" href="/orders"><i class="bi bi-geo-alt me-2"></i>Track Order</a>
+          <a class="btn btn-outline-primary btn-lg px-4" href="/menu">Back to Menu</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menu — Smart Canteen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg sticky-top border-bottom py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <span class="brand-mark">🍽️</span>
+        <span class="brand-text fw-bold fs-5 text-dark">Smart Canteen</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/menu">Menu</a></li>
+          <li class="nav-item"><a class="nav-link" href="/orders">My Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          <span data-auth-link="name" class="fw-semibold text-primary" hidden></span>
+          <a href="/admin" class="btn btn-sm btn-outline-secondary" data-auth-link="admin" hidden><i class="bi bi-speedometer2 me-1"></i>Admin</a>
+          <a href="/login" class="btn btn-outline-primary" data-auth-link="login">Sign In</a>
+          <button class="btn btn-outline-secondary btn-sm" data-auth-link="logout" hidden data-logout-btn>Logout</button>
+          <button class="cart-btn desktop-cart" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-label="Open cart">
+            <i class="bi bi-bag"></i><span class="cart-count" hidden>0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4" id="top">
+    <div class="mb-4">
+      <div class="eyebrow">Live menu</div>
+      <h2 class="mb-1">What would you like to eat?</h2>
+      <p class="text-secondary mb-0">Availability and stock are updated in real time from the canteen.</p>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar mb-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-5">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+            <input type="search" id="searchInput" class="form-control border-start-0" placeholder="Search food… (e.g. dosa, coffee)">
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="cat-pills" id="catPills">
+            <button class="cat-pill active" data-cat="">All</button>
+            <button class="cat-pill" data-cat="Breakfast">Breakfast</button>
+            <button class="cat-pill" data-cat="Snacks">Snacks</button>
+            <button class="cat-pill" data-cat="Meals">Meals</button>
+            <button class="cat-pill" data-cat="Beverages">Beverages</button>
+            <button class="cat-pill" data-cat="Desserts">Desserts</button>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <select id="sortSelect" class="form-select">
+            <option value="">Sort: Default</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="popular">Most Popular</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular strip -->
+    <div id="popularStrip" class="mb-4" hidden>
+      <h5 class="mb-3"><i class="bi bi-star-fill text-warning me-1"></i> Popular items</h5>
+      <div class="food-grid" id="popularGrid"></div>
+      <hr class="my-4">
+    </div>
+
+    <!-- Grid -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0" id="resultCount">&nbsp;</h5>
+    </div>
+    <div class="food-grid" id="foodGrid">
+      <div class="skeleton" style="height:320px"></div>
+      <div class="skeleton" style="height:320px"></div>
+      <div class="skeleton" style="height:320px"></div>
+      <div class="skeleton" style="height:320px"></div>
+    </div>
+    <div id="emptyState" class="empty-state" hidden>
+      <div class="big">🔍</div>
+      <h5>No items found</h5>
+      <p>Try a different search or category.</p>
+      <button class="btn btn-outline-primary" id="clearFilters">Clear filters</button>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/menu.js"></script>
+</body>
+</html>
