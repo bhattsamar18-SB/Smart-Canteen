@@ -138,9 +138,9 @@ function series(kind, { from, to, vendorId } = {}) {
   }
 
   const rows = query(
-    `SELECT strftime('${cfg.fmt}', created_at) AS label,
-            COUNT(*) AS orders, COALESCE(SUM(total_amount),0) AS revenue
-     FROM orders
+    `SELECT strftime('${cfg.fmt}', o.created_at) AS label,
+            COUNT(*) AS orders, COALESCE(SUM(o.total_amount),0) AS revenue
+     FROM orders o
      WHERE ${where.join(' AND ')}
      GROUP BY label ORDER BY label ASC`,
     params

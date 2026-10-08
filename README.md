@@ -22,7 +22,10 @@ A complete, responsive web application for a college campus canteen. Students br
 
 ### Windows (one click)
 
-Double-click **`start.bat`** — it installs dependencies, creates the database if missing and starts the server.
+1. Double-click **`install.bat`** — installs Node.js (if missing), then dependencies and the database.
+2. Double-click **`start.bat`** — starts the server and opens the browser.
+
+The server runs on **http://localhost:1311**.
 
 ### Manual
 
@@ -32,7 +35,7 @@ npm run db:init     # create + seed the database (optional — see note below)
 npm start
 ```
 
-Then open **http://localhost:3000**
+Then open **http://localhost:1311**
 
 > `npm run db:init` re-creates `data/smartcanteen.db` with demo data. It is optional: if the file is missing, the server auto-creates and seeds it on first start. Re-running `db:init` **resets all data** to the demo state.
 
@@ -126,7 +129,9 @@ smart-canteen/
 │   └── init.js                # npm run db:init
 ├── scripts/gen-food-assets.js # regenerates food images
 ├── e2e.test.js                # npm test — 93 end-to-end checks
+├── install.bat                # Windows one-click installer (installs Node.js + deps)
 ├── start.bat                  # Windows one-click start
+├── 2start_host.bat            # optional public link via cloudflared tunnel
 ├── data/smartcanteen.db       # created automatically (gitignore-able)
 └── package.json
 ```
@@ -191,7 +196,7 @@ Safety rules enforced server-side: an admin cannot change their own role, restri
 
 | Issue | Fix |
 |---|---|
-| `EADDRINUSE` on port 3000 | Change `PORT` in `.env` or stop the other process |
+| `EADDRINUSE` on port 1311 | Change `PORT` in `.env` or stop the other process |
 | Blank/stale demo data | `npm run db:init` (resets everything to the seeded state) |
 | Charts not loading | Chart.js loads from a CDN — check your internet connection |
 | Login fails | Check you're using the right portal (Student vs Vendor) and the account isn't restricted by the administrator |
