@@ -6,7 +6,7 @@ require('dotenv').config();
 const { ensureSchema } = require('./config/db');
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 1311;
 
 // Create tables on first run (no manual schema import required)
 ensureSchema();

@@ -1,5 +1,5 @@
 /* E2E smoke test for Smart Canteen (run: node e2e.test.js) */
-const BASE = 'http://localhost:3000';
+const BASE = 'http://localhost:1311';
 let pass = 0, fail = 0;
 function ok(cond, label) {
   if (cond) { pass++; console.log('  PASS  ' + label); }
@@ -108,6 +108,28 @@ const stamp = Date.now();
   ok(r.status === 200 && r.data.scope === 'vendor', 'vendor sales report scope=vendor');
   r = await admin('/api/analytics/sales');
   ok(r.status === 200 && r.data.scope === 'canteen', 'admin sales report scope=canteen');
+
+  // analytics series + breakdowns (regression: alias bug broke daily/weekly/monthly)
+  for (const kind of ['daily', 'weekly', 'monthly']) {
+    r = await admin('/api/analytics/' + kind);
+    ok(r.status === 200 && Array.isArray(r.data.data), `admin analytics ${kind} -> 200`);
+  }
+  r = await admin('/api/analytics/summary');
+  ok(r.status === 200 && typeof r.data.totalOrders === 'number', 'admin analytics summary -> 200');
+  r = await admin('/api/analytics/popular');
+  ok(r.status === 200 && Array.isArray(r.data.items), 'admin analytics popular -> 200');
+  r = await admin('/api/analytics/category');
+  ok(r.status === 200 && Array.isArray(r.data.categories), 'admin analytics category -> 200');
+  for (const kind of ['daily', 'weekly', 'monthly']) {
+    r = await vendor('/api/analytics/' + kind);
+    ok(r.status === 200 && Array.isArray(r.data.data), `vendor analytics ${kind} -> 200`);
+  }
+  r = await vendor('/api/analytics/summary');
+  ok(r.status === 200 && typeof r.data.totalOrders === 'number', 'vendor analytics summary -> 200');
+  r = await vendor('/api/analytics/popular');
+  ok(r.status === 200 && Array.isArray(r.data.items), 'vendor analytics popular -> 200');
+  r = await vendor('/api/analytics/category');
+  ok(r.status === 200 && Array.isArray(r.data.categories), 'vendor analytics category -> 200');
 
   // ---------- 4. Student signup + order flow (COD) ----------
   console.log('\n-- Student order (COD) --');
